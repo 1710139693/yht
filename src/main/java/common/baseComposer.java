@@ -20,7 +20,8 @@ import java.util.Date;
 public class baseComposer {
 
     public static String proj_path = System.getProperty("user.dir");
-    public static String exportFileAddr = proj_path + "/log";
+    public static String exportFileAddr = proj_path + "/log/";
+    public static String picFileAddr=proj_path + "/pic";
 
 
     /**
@@ -28,7 +29,7 @@ public class baseComposer {
      * @return
      */
     @Test
-    public void onLoginInfo() {
+    public void onLoginInfo() throws InterruptedException{
 
         //System.setProperty("webdriver.gecko.driver", geckodriver);
 
@@ -38,6 +39,7 @@ public class baseComposer {
         // 创建一个 FireFox 的浏览器实例
         WebDriver driver = new FirefoxDriver();
         loginComposer.onLoginInfo(driver);
+
         //return driver;
     }
 

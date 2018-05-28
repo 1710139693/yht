@@ -31,7 +31,7 @@ public class loginComposer {
      * @param driver
      * @throws InterruptedException
      */
-    public static void onLoginInfo(WebDriver driver) {
+    public static void onLoginInfo(WebDriver driver) throws InterruptedException{
 
         //获取浏览器cookie
         /*HttpServletRequest request = ServletActionContext.getRequest();
@@ -42,12 +42,14 @@ public class loginComposer {
             }
         }*/
         baseComposer base=new baseComposer();
+        //读取Excel登录信息
         String[] file_content = onLoginAccount();
 
         //最大化浏览器
         driver.manage().window().maximize();
         // 让浏览器访问 url
         driver.get(file_content[2]);
+        base.rwFile("","=======================REDAY TO LOGIN=====================","");
 
         try {
             Thread.sleep(1000);
@@ -62,50 +64,49 @@ public class loginComposer {
 
             boolean codeFlag=true;
             for (int i=1;codeFlag;i++){
+
                 //获取验证码
                 String codestr=getValidCode(driver);
-                System.out.println("======================"+codestr);
+                System.out.println("==========codestr============"+codestr);
+                base.rwFile("登录验证码","",codestr);
 
+                //输入验证码
                 WebElement valid_code=driver.findElement(By.xpath("//input[@name='valid-code']"));
                 valid_code.clear();
                 Thread.sleep(1000);
                 valid_code.sendKeys(codestr);
-                Thread.sleep(2000);
+                Thread.sleep(3000);
 
-                //?????
-                //WebElement login_form = driver.findElement(By.xpath("//form[contains(@class,'login-form')]"));
-               // WebElement btn_login=driver.findElement(By.xpath("//input[contains(@id,'login') and @type='submit']"));
-                WebElement btn_login=driver.findElement(By.cssSelector("#btn-login"));
-                //WebElement btn_login=driver.findElement(By.id("btn-login"));
+                //点击登录
+                //WebElement btn_login=driver.findElement(By.xpath("//input[@value='登 录']"));
+                WebElement btn_login=driver.findElement(By.xpath("//*[@id=\"btn-login\"]"));
                 btn_login.click();
-                Thread.sleep(5000);
+                Thread.sleep(3000);
 
+                //判断昵称是否存在，若存在说明登录成功！
                 By lactor=By.className("user-login");
-                boolean flag=base.isElementExsit(driver,lactor,null);
-                System.out.println("*************************"+flag);
-                if(flag){
-                    //捕获验证码图片元素
-                    WebElement valid_img_div=driver.findElement(By.xpath("//div[@class='ib-column valid-img']"));
-                    WebElement valid_img=valid_img_div.findElement(By.tagName("img"));
-                    valid_img.click();
-                    Thread.sleep(2000);
-                    System.out.println("===========++++==========="+i);
-                   /* WebElement valid_msg=driver.findElement(By.className("valid-msg"));
-                    String text=valid_msg.getText();
-                    System.out.println("++++++++"+text);
-                    if(valid_msg.getText().equals("图片验证码错误")){
-                        System.out.println("=============图片验证码错误");
-                    }*/
-                }else{
-                    System.out.println("=============sss========="+i);
-                    //System.out.println("=============登录成功");
-                    codeFlag=false;
+                boolean flag=base.isElementExsit(driver,lactor,"头部登录按钮");
+
+                    if(!flag){
+                        System.out.println("=============登录成功========="+i);
+                        base.rwFile("登录状态","第"+i+"次登录","success");
+                        codeFlag=false;
+
+                     }else{
+                        //捕获验证码图片元素
+                        WebElement valid_img_div=driver.findElement(By.xpath("//div[@class='ib-column valid-img']"));
+                        WebElement valid_img=valid_img_div.findElement(By.tagName("img"));
+                        valid_img.click();
+                        Thread.sleep(3000);
+                        System.out.println("===========fail==========="+i);
+                        base.rwFile("登录状态","第"+i+"次登录","fail");
+                    }
+
                 }
 
-            }
-
-
         } catch (Exception e) {
+            base.rwFile("异常：","",e.toString());
+            System.out.println("TTTTTTTTTTTTTTTTTTT"+e.toString());
             e.printStackTrace();
         }
     }
@@ -127,14 +128,13 @@ public class loginComposer {
             Point location=valid_img.getLocation();
             int width=valid_img.getSize().getWidth();
             int height=valid_img.getSize().getHeight();
-            //Rectangle rect = new Rectangle(width,height);
 
             BufferedImage img= ImageIO.read(scrFile);
             BufferedImage dest = img.getSubimage(location.getX(),location.getY(),width,height);
             ImageIO.write(dest,"png",scrFile);
             Thread.sleep(1000);
 
-            File codePng=new File("D:/IdeaProject/pic/code.png");
+            File codePng=new File(baseComposer.picFileAddr + "/code.png");
             if (codePng.exists()){
                 codePng.delete();
             }
