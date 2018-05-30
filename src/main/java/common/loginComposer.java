@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -28,10 +29,9 @@ public class loginComposer {
 
     /**
      * 平台登录
-     * @param driver
      * @throws InterruptedException
      */
-    public static void onLoginInfo(WebDriver driver) throws InterruptedException{
+    public static void onLoginInfo() throws InterruptedException{
 
         //获取浏览器cookie
         /*HttpServletRequest request = ServletActionContext.getRequest();
@@ -44,11 +44,7 @@ public class loginComposer {
         baseComposer base=new baseComposer();
         //读取Excel登录信息
         String[] file_content = onLoginAccount();
-
-        //最大化浏览器
-        driver.manage().window().maximize();
-        // 让浏览器访问 url
-        driver.get(file_content[2]);
+        WebDriver driver=base.openBrowser(file_content[2]);
         base.rwFile("","=======================REDAY TO LOGIN=====================","");
 
         try {
@@ -80,6 +76,7 @@ public class loginComposer {
                 //点击登录
                 //WebElement btn_login=driver.findElement(By.xpath("//input[@value='登 录']"));
                 WebElement btn_login=driver.findElement(By.xpath("//*[@id=\"btn-login\"]"));
+                driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
                 btn_login.click();
                 Thread.sleep(3000);
 
@@ -109,6 +106,7 @@ public class loginComposer {
             System.out.println("TTTTTTTTTTTTTTTTTTT"+e.toString());
             e.printStackTrace();
         }
+        driver.close();
     }
 
     /**

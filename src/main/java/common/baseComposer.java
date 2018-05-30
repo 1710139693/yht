@@ -25,12 +25,21 @@ public class baseComposer {
 
 
     /**
-     * 打开浏览器,账号登录
-     * @return
+     * 账号登录
+     * @throws InterruptedException
      */
     @Test
     public void onLoginInfo() throws InterruptedException{
 
+        loginComposer.onLoginInfo();
+    }
+
+    /**
+     * 打开浏览器,输入请求地址
+     * @param url
+     * @return
+     */
+    public  WebDriver openBrowser(String url) {
         //System.setProperty("webdriver.gecko.driver", geckodriver);
 
         // 如果你的 FireFox 没有安装在默认目录，那么必须在程序中设置
@@ -38,10 +47,13 @@ public class baseComposer {
 
         // 创建一个 FireFox 的浏览器实例
         WebDriver driver = new FirefoxDriver();
-        loginComposer.onLoginInfo(driver);
-
-        //return driver;
+        //最大化浏览器
+        //driver.manage().window().maximize();
+        // 让浏览器访问 url
+        driver.get(url);
+        return driver;
     }
+
 
     /**
      * 判断元素/对象是否存在
@@ -79,7 +91,6 @@ public class baseComposer {
         FileWriter fw = null;
         try {
             fw = new FileWriter(exportFileAddr + getFormatDateYMD(new Date()) + ".log", true);
-            System.out.println("++++++++++++++"+exportFileAddr);
             String valuestring = String.valueOf(value);
             fw.write(cases + " "+ message + " " + valuestring + "\r\n");
             fw.flush();
