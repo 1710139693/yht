@@ -3,18 +3,23 @@ package common;
 /**
  * Created by 秋月 on 2018/5/22.
  */
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.touch.TouchActions;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testng.annotations.Test;
+import sun.rmi.runtime.Log;
+import java.util.List;
 
 import java.util.*;
 import java.io.*;
@@ -66,6 +71,82 @@ public class baseComposer {
         driver.manage().window().maximize();
         Thread.sleep(1000);
         return driver;
+    }
+
+    /**
+     * 使用谷歌浏览器模拟wap测试
+     * @throws InterruptedException
+     */
+    @Test
+    public void initdriver() throws InterruptedException{
+        String devicesName="Galaxy S5";
+        System.setProperty("webdriver.chrome.driver","D:\\yhtWord\\IdeaProject\\chromedriver.exe");
+        Map<String, String> mobileEmulation=new HashMap<String, String>();
+        //设置设备
+        mobileEmulation.put("deviceName",devicesName);
+        System.out.println("使用谷歌浏览器模拟手机设备为："+ devicesName);
+
+        Map<String, Object> chromeOptions=new HashMap<String, Object>();
+        chromeOptions.put("mobileEmulation",mobileEmulation);
+        DesiredCapabilities capabilities=DesiredCapabilities.chrome();
+        capabilities.setCapability(ChromeOptions.CAPABILITY,chromeOptions);
+        try {
+            WebDriver driver=new ChromeDriver(capabilities);
+            driver.get("https://www.1haitao.com/website89.html");
+
+            Thread.sleep(3000);
+            //旋转屏幕
+            /*WebDriver driver = new AndroidDriver();
+            ((Rotatable)driver).rotate(ScreenOrientation.LANDSCAPE);
+            driver.get("url");*/
+            //触摸和滚动屏幕
+            /*((Rotatable)driver).rotate(ScreenOrientation.PORTRAIT);
+            TouchActions touch = new TouchActions(driver);
+            touch.scroll(0, 560).build().perform();//向下滚动800像素
+*/
+
+
+            /*//滑动至特定元素处，方法一 该方法滑动后不停留，不利于截屏，不建议使用
+            Actions action=new Actions(driver);
+            action.moveToElement(element).perform();
+            //滑动至特定元素处，方法二
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);*/
+
+
+
+            //移动到元素element对象的“顶端”与当前窗口的“顶部”对齐  有效
+            //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
+            //((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+
+//移动到元素element对象的“底端”与当前窗口的“底部”对齐
+          //  ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(false);", element);
+
+//移动到页面最底部 有效
+            ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+//移动到指定的坐标(相对当前的坐标移动)
+          //  ((JavascriptExecutor) driver).executeScript("window.scrollBy(0, 700)");
+
+//结合上面的scrollBy语句，相当于移动到700+800=1600像素位置
+          // ((JavascriptExecutor) driver).executeScript("window.scrollBy(0, 2000)");
+
+//移动到窗口绝对位置坐标，如下移动到纵坐标1600像素位置
+           // ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 1600)");
+
+//结合上面的scrollTo语句，仍然移动到纵坐标1200像素位置
+            //((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 800)");
+            Thread.sleep(5000);
+            List<WebElement> good_desc=driver.findElements(By.className("good-desc"));
+            WebElement element=good_desc.get(0);
+            WebElement element8=good_desc.get(8);
+
+            int dd_size=good_desc.size();
+            System.out.println("================+++++++"+dd_size);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     /**
