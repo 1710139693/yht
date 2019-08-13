@@ -67,6 +67,8 @@ public class baseComposer {
 
         // 创建一个 FireFox 的浏览器实例
         WebDriver driver = new FirefoxDriver();
+        /*WebDriver driver = new ChromeDriver();
+        System.setProperty("webdriver.chrome.driver","D:\\yhtWord\\IdeaProject\\chromedriver.exe");*/
         //最大化浏览器
         driver.manage().window().maximize();
         Thread.sleep(1000);
@@ -283,6 +285,7 @@ public class baseComposer {
                             cells[cellNum] = getCellValue(cell);
                         }*/
                     }
+
                 }
             }
             workbook.close();
